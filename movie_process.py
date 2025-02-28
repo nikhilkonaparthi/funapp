@@ -1,14 +1,19 @@
+
+---
+
+### **📂 3. `src/movie_processing.py` (Core Functional Logic)**
+```python
 import csv
 from functools import reduce
 
-# Load movie data from CSV
 def load_movies(filename):
+    """Load movie data from a CSV file."""
     with open(filename, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         return list(reader)
 
-# Convert numerical fields
 def transform_movies(movies):
+    """Convert string values to appropriate data types."""
     return list(map(lambda m: {
         "title": m["title"],
         "year": int(m["year"]),
@@ -16,34 +21,15 @@ def transform_movies(movies):
         "revenue": int(m["revenue"])
     }, movies))
 
-# Get top-rated movies (rating > 8.5)
-def get_top_rated_movies(movies):
-    return list(filter(lambda m: m["rating"] > 8.5, movies))
+def get_top_rated_movies(movies, threshold=8.5):
+    """Return movies with a rating above the threshold."""
+    return list(filter(lambda m: m["rating"] > threshold, movies))
 
-# Compute average rating
 def average_rating(movies):
+    """Compute the average rating of movies."""
     total_rating = reduce(lambda acc, m: acc + m["rating"], movies, 0)
     return total_rating / len(movies) if movies else 0
 
-# Find highest-grossing movie
 def highest_grossing_movie(movies):
+    """Find the movie with the highest revenue."""
     return max(movies, key=lambda m: m["revenue"], default=None)
-
-# Main function
-def main():
-    movies = load_movies("movies.csv")
-    movies = transform_movies(movies)
-
-    top_movies = get_top_rated_movies(movies)
-    avg_rating = average_rating(movies)
-    highest_grossing = highest_grossing_movie(movies)
-
-    print("\nTop Rated Movies:")
-    for movie in top_movies:
-        print(f"{movie['title']} ({movie['year']}) - Rating: {movie['rating']}")
-
-    print(f"\nAverage Movie Rating: {avg_rating:.2f}")
-    print(f"\nHighest Grossing Movie: {highest_grossing['title']} - ${highest_grossing['revenue']}M")
-
-if __name__ == "__main__":
-    main()
